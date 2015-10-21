@@ -1,0 +1,77 @@
+#!/usr/bin/awk -f
+
+BEGIN {
+	recvSize = 0;
+	gotime = 1;
+	time = 0;
+	packet_size = 50;
+	time_interval=2;
+}
+
+#body
+{
+        event = $1
+             time = $2
+             node_id = $3
+             level = $4
+             pktType = $7
+
+ if(time>gotime) {
+
+  print gotime, (packet_size * recv * 8.0)/1000; #packet size * ... gives results in kbps
+  gotime+= time_interval;
+  recv=0;
+  }
+
+#============= CALCULATE throughput=================
+
+if (( event == "r") && ( pktType == "cbr" ) && ( level=="AGT" ))
+{
+ recv++;
+}
+
+} #body
+
+
+END {
+;
+}
+
+#################################################################
+
+############################################
+
+
+#filename:Throughput.awk
+
+#--------- Formula ------------:
+	
+Throughput = received_data*8/DataTransmissionPeriod
+
+#--------- AWK script Format--------#
+
+
+The script has the following format:
+BEGIN {}
+{
+content
+}
+END {}
+Begin part comprises of initialization of variable.
+Commands in the content part scan every row of trace file only once.
+Ex:
+	if (pattern) {
+		action;
+	}
+
+If the pattern is matched with the line in the trace in the trace file specified action will be performed. 
+
+In the END part final calculation is performed on the data obtained from the content part.
+	
+
+#--------- Steps ------------:
+
+1.	set pattern and action for received data 
+2.	apply the received data value in the formula to calculate throughput in bits/s
+
+#################################################################

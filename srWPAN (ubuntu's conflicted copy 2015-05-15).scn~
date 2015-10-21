@@ -1,0 +1,112 @@
+# ====== SCENARIO =======
+# Nodes 11.
+# 	-> Sink 	1
+#	-> Coordinators	3
+#	-> Devices	7
+# Area 50m*50m
+# Neighbor distance	10m aprox
+# TxRange		15m
+# MaxSpeed		0.9 m/s
+# Duration 		60s
+# Traffic 		UDP
+# Application		CBR
+# Beacon mode		Disabled
+# Data Tx 		Direct and Indirect
+# CarrierSense Thresh	8.54570e-07
+# RxSensitivity Thresh	8.54570e-07
+
+# ======== INITIAL POSITIONS =============
+## SINK ##
+$node_(0) set X_ 30
+$node_(0) set Y_ 30
+$node_(0) set Z_ 0.000000000000
+
+## COORDINATORS ##
+$node_(1) set X_ 30
+$node_(1) set Y_ 40
+$node_(1) set Z_ 0.000000000000
+
+$node_(2) set X_ 23
+$node_(2) set Y_ 23
+$node_(2) set Z_ 0.000000000000
+
+$node_(3) set X_ 38.5
+$node_(3) set Y_ 23
+$node_(3) set Z_ 0.000000000000
+
+## MOBILE NODES ##
+# Cluster1
+$node_(4) set X_ 23
+$node_(4) set Y_ 47
+$node_(4) set Z_ 0.000000000000
+
+$node_(5) set X_ 37
+$node_(5) set Y_ 47
+$node_(5) set Z_ 0.000000000000
+
+# Cluster2
+$node_(6) set X_ 16
+$node_(6) set Y_ 16
+$node_(6) set Z_ 0.000000000000
+
+$node_(7) set X_ 16
+$node_(7) set Y_ 30
+$node_(7) set Z_ 0.000000000000
+
+# Cluster3
+$node_(8) set X_ 46
+$node_(8) set Y_ 30
+$node_(8) set Z_ 0.000000000000
+
+$node_(9) set X_ 46
+$node_(9) set Y_ 16
+$node_(9) set Z_ 0.000000000000
+
+# Wild. Inits in Cluster1
+$node_(10) set X_ 30
+$node_(10) set Y_ 50
+$node_(10) set Z_ 0.000000000000
+
+################ MOVEMENTS ##################
+set nodeSpeed 0.9
+set startMoving 14.0
+set noMove 119.99
+
+# Within Cluster1
+$ns_ at $startMoving "$node_(4) setdest 37 41 $nodeSpeed"
+$ns_ at 35.5 "$node_(4) setdest 23 47 $nodeSpeed"
+$ns_ at 57.0 "$node_(4) setdest 37 41 $nodeSpeed"
+$ns_ at 78.5 "$node_(4) setdest 23 47 $nodeSpeed"
+$ns_ at 100.0 "$node_(4) setdest 37 41 $nodeSpeed"
+
+$ns_ at $startMoving "$node_(5) setdest 23 41 $nodeSpeed"
+$ns_ at 35.5 "$node_(5) setdest 37 47 $nodeSpeed"
+$ns_ at 57.0 "$node_(5) setdest 23 41 $nodeSpeed"
+$ns_ at 78.5 "$node_(5) setdest 37 47 $nodeSpeed"
+$ns_ at 100.0 "$node_(5) setdest 23 41 $nodeSpeed"
+
+# Within Cluster2
+$ns_ at $startMoving "$node_(6) setdest 22 30 $nodeSpeed"
+$ns_ at 35.5 "$node_(6) setdest 16 16 $nodeSpeed"
+$ns_ at 57.0 "$node_(6) setdest 22 30 $nodeSpeed"
+$ns_ at 78.5 "$node_(6) setdest 16 16 $nodeSpeed"
+$ns_ at 100.0 "$node_(6) setdest 22 30 $nodeSpeed"
+
+$ns_ at $startMoving "$node_(7) setdest 22 16 $nodeSpeed"
+$ns_ at 35.5 "$node_(7) setdest 16 30 $nodeSpeed"
+$ns_ at 57.0 "$node_(7) setdest 22 16 $nodeSpeed"
+$ns_ at 78.5 "$node_(7) setdest 16 30 $nodeSpeed"
+$ns_ at 100.0 "$node_(7) setdest 22 16 $nodeSpeed"
+
+# Within Cluster3
+$ns_ at $noMove "$node_(8) setdest 35 45 $nodeSpeed"
+$ns_ at $noMove "$node_(8) setdest 35 45 $nodeSpeed"
+
+$ns_ at $noMove "$node_(9) setdest 35 30 $nodeSpeed"
+$ns_ at $noMove "$node_(9) setdest 25 30 $nodeSpeed"
+
+# Wild node
+$ns_ at $startMoving "$node_(10) setdest 48 23 $nodeSpeed"
+$ns_ at 50.0 "$node_(10) setdest 27 17 $nodeSpeed"
+$ns_ at 75.0 "$node_(10) setdest 19 35 $nodeSpeed"
+$ns_ at 97.0 "$node_(10) setdest 30 49 $nodeSpeed"
