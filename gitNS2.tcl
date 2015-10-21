@@ -21,7 +21,7 @@ set val(nn)     	11                         	;# number of mobilenodes
 set val(rp)     	AODV	                      ;# routing protocol
 set val(x)		    50				                  ;# X=50m
 set val(y)		    50				;# Y=50m
-set val(nam)		  srWPAN.nam
+set val(nam)		  gitNS2.nam
 set val(traffic)	cbr                        	;# cbr||poisson||ftp||tcp
 
 #read command line arguments
@@ -50,10 +50,10 @@ set stopTime    120	;# in seconds
 #Create an instance of the simulator
 set ns_		[new Simulator]
 #Setup trace support
-set tracefd	[open ./srWPAN.tr w]
+set tracefd	[open ./gitNS2.tr w]
 $ns_ trace-all $tracefd
 #Setup nam file
-if { "$val(nam)" == "srWPAN.nam" } {
+if { "$val(nam)" == "gitNS2.nam" } {
 	set namtrace [open ./$val(nam) w]
 	$ns_ namtrace-all-wireless $namtrace $val(x) $val(y)
 }
@@ -125,7 +125,7 @@ for {set i 0} {$i < $val(nn) } {incr i} {
 
 #As random-motion is disabled, node position and movement (speed and direction) must be provided
 #Initial Node Positions
-source ./srWPAN.scn
+source ./gitNS2.scn
 
 # SINK
 $ns_ at 0.0	"$node_(0) NodeLabel PAN Coor"		;# Label Node0 as "PAN Coor".
@@ -256,8 +256,8 @@ proc stop {} {
                 set hasDISPLAY 1
         }
     }
-    if { ("$val(nam)" == "srWPAN.nam") && ("$hasDISPLAY" == "1") } {
-    	exec nam srWPAN.nam &
+    if { ("$val(nam)" == "gitNS2.nam") && ("$hasDISPLAY" == "1") } {
+    	exec nam gitNS2.nam &
     }
 }
 
