@@ -12,17 +12,17 @@ print " ";
 #raw_input();
 
 print "=== Ejecutando script ===";
-# Abrir archivo
+# Abrir archivo .tr
 archivo = open("gitNS2.tr", "r");
 print "Nombre del archivo: \t", archivo.name;	#Modo de impresion 2
-print "Modo de apertura: \t", archivo.mode;
+print "Modo de apertura: \t", archivo.mode;		#read mode
 
-# Conteo de trazas
+# Conteo de trazas/eventos
 enunciados = archivo.readlines();
-print("Trazas encontradas: \t%s" %(len(enunciados)));	#Modo de impresion 3
-#print "Trazas encontradas: ", len(enunciados);	#Modo de impresion 4
+print("Trazas totales: \t%s" %(len(enunciados)));	#Modo de impresion 3
+#print "Trazas totales: ", len(enunciados);	#Modo de impresion 4
 
-# Definiciones
+# Definiciones para el filtrado
 sinkNode = '_0_';
 mobileNode = '_10_';
 findLayer = 'MAC';
@@ -33,16 +33,16 @@ removeText = '\n';
 traza = [];
 for linea in enunciados :
 	campo = linea.split(splitText);
-	#Excluimos eventos ajenos a 'received', 'sent' y 'dropped'
+	#Leemos solo eventos 'received', 'sent' y 'dropped'
 	if campo[0] not in ['r','s','D']:
 		continue
-	#Excluimos capas ajenas a 'MAC'
-	if not (campo[3] == 'MAC'):
+	#Leemos solo capa 'MAC'
+	if not (campo[3] == findLayer):
 		continue
-	#Excluimos trafico ajeno al tipo 'cbr'
-	if not (campo[7] == 'cbr'):
+	#Leemos solo trafico tipo 'cbr'
+	if not (campo[7] == findTraffic):
 		continue
-	#Armamos el array
+	#Armamos el array o nuevo conjunto de trazas
 	traza.append({'evento': campo[0], 'time': campo[1], 'nodeID': campo[2], 'pakUID': int(campo[6]), 'pakSize': campo[8]})
 
 print("Trazas filtradas: \t%s" % (len(traza)));

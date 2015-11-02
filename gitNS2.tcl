@@ -1,10 +1,28 @@
-#############################################
-#  Hierarchical Cluster Tree over 802.15.4  #
-#             (No-beacon enabled)           #
-#############################################
+#####################################################################################
+#  Hierarchical Cluster Tree over 802.15.4                                          #
+#             (No-beacon enabled)                                                   #
+# ----------------------------------------------------------------------------------#
+# Autor: Ing. Miguel Alejandro Chavarín                                             #
+#   used resources:                                                                 #
+#     - http://jhshi.me/2013/12/13/simulate-random-mac-protocol-in-ns2-part-i/      #
+#####################################################################################
 
 # ======================================================================
-# Define options
+# Project Parameters
+# ======================================================================
+set val(duration)       10                    ;# Simulation duration in secs                
+set val(packetsize)     80                    ;# Size in Bytes
+set val(repeatTx)       10                    ;# Number of Packets
+set val(interval)       0.02                  ;# BitRate in secs
+set val(x)              50                    ;# X=50m
+set val(y)              50                    ;# Y=50m
+set val(nam_file)       "gitNS2.nam"
+set val(trace_file)     "gitNS2.tr"
+set val(stats_file)     "gitNS2.stats"
+set val(node_size)      5                     ;# Nodes size in nam
+
+# ======================================================================
+# Define Node Options
 # ======================================================================
 set val(chan)     Channel/WirelessChannel     ;# channel type
 set val(prop)     Propagation/TwoRayGround   	;# radio-propagation model
@@ -14,14 +32,11 @@ set val(ifq)  		Queue/DropTail/PriQueue    	;# interface queue type
 set val(ll)     	LL                         	;# link layer type
 set val(ant)    	Antenna/OmniAntenna        	;# antenna model
 set val(ifqlen) 	50                         	;# max packet in ifq
-set val(nn)     	11                         	;# number of mobilenodes
-#set val(rp)     	DSDV                       	 ;# routing protocol
+set val(nn)     	11                         	;# number of nodes: 1 SN, 3 CH, 6 MN, 1WN
+#set val(rp)     	DSDV                       	 ;# routing protocol        USE THIS ONE!
 #set val(rp)     	TORA                       	 ;# routing protocol
 #set val(rp)     	DSR                        	 ;# routing protocol
 set val(rp)     	AODV	                      ;# routing protocol
-set val(x)		    50				                  ;# X=50m
-set val(y)		    50				;# Y=50m
-set val(nam)		  gitNS2.nam
 set val(traffic)	cbr                        	;# cbr||poisson||ftp||tcp
 
 #read command line arguments
@@ -36,27 +51,25 @@ proc getCmdArgu {argc argv} {
 }
 getCmdArgu $argc $argv
 
-#Setting time in seconds for Events (Tx): Simulation lapse -> 60 sec
-set appTime1    20	;# in seconds
-set appTime2    55	;# in seconds
-set appTime3    80	;# in seconds 
-set stopTime    120	;# in seconds
-
 # ======================================================================
 # Main Program
 # ======================================================================
 
 # Initialize Global Variables
 #Create an instance of the simulator
-set ns_		[new Simulator]
+set ns_		                  [new Simulator]
+
 #Setup trace support
-set tracefd	[open ./gitNS2.tr w]
-$ns_ trace-all $tracefd
+set   tracefd	              [open ./$val(trace_file) w]
+$ns_  trace-all             $tracefd
+
+#Setup stats file
+set stats                   [open $val(stats_file) w]
+
 #Setup nam file
-if { "$val(nam)" == "gitNS2.nam" } {
-	set namtrace [open ./$val(nam) w]
-	$ns_ namtrace-all-wireless $namtrace $val(x) $val(y)
-}
+set   namtrace              [open ./$val(nam_file) w]
+$ns_  namtrace-all-wireless $namtrace $val(x) $val(y)
+
 $ns_ puts-nam-traceall {# nam4wpan #}		 ;# inform nam that this is a trace file for wpan (special handling needed)
 Mac/802_15_4 wpanNam namStatus on		     ;# default = off (should be turned 'on' before other 'wpanNam' commands can work)
 Mac/802_15_4 wpanCmd verbose on
@@ -87,6 +100,7 @@ Phy/WirelessPhy set RXThresh_ $dist(15m)	;#CSThresh must always be less than or 
 
 #Create topology object that keeps track of movements of mobile nodes within topological boundary
 set topo   	[new Topography]
+
 #Define Topography: X=50m, Y=50m
 $topo load_flatgrid $val(x) $val(y)
 
@@ -98,83 +112,81 @@ set chan_1_ [new $val(chan)]
 
 # Create node(0) "attached" to channel #1
 # Configuration of nodes
-$ns_ node-config -adhocRouting $val(rp) \
-		 -llType $val(ll) \
-		 -macType $val(mac) \
-		 -ifqType $val(ifq) \
-		 -ifqLen $val(ifqlen) \
-		 -antType $val(ant) \
-		 -propType $val(prop) \
-		 -phyType $val(netif) \
-		 -topoInstance $topo \
-		 -agentTrace ON \
-		 -routerTrace ON \
-		 -macTrace ON \
-		 -movementTrace OFF \
+$ns_ node-config -adhocRouting  $val(rp) \
+		 -llType                    $val(ll) \
+		 -macType                   $val(mac) \
+		 -ifqType                   $val(ifq) \
+		 -ifqLen                    $val(ifqlen) \
+		 -antType                   $val(ant) \
+		 -propType                  $val(prop) \
+		 -phyType                   $val(netif) \
+		 -topoInstance              $topo \
+		 -agentTrace                ON \
+		 -routerTrace               ON \
+		 -macTrace                  ON \
+		 -movementTrace             OFF \
 		#-energyModel "EnergyModel" \
                 #-initialEnergy 1 \
                 #-rxPower 0.3 \
                 #-txPower 0.3 \
-		 -channel $chan_1_
+		 -channel                   $chan_1_
 
-#Create the nn mobilenodes	 
-for {set i 0} {$i < $val(nn) } {incr i} {
-	set node_($i) [$ns_ node]
-	$node_($i) random-motion 0		;# disable random motion
+# ======== CREATE NODES =============
+#Create the only Sink Node
+#variable sink_node
+# set   sink_node         [$ns_ node]
+# $sink_node              random-motion   0; # disable random motion
+# set   sink              [new Agent/LossMonitor]
+# $ns_  attach-agent      $sink_node      $sink
+# $ns_  initial_node_pos  $sink_node      $val(node_size)
+
+#Create the nn mobilenodes
+for {set i 0} {$i < $val(nn) } {incr i} {  
+  set node_($i)             [$ns_ node]
+  $node_($i)  random-motion 0;
+  if { ($i == 0) } {
+    set   sink              [new Agent/LossMonitor]
+    $ns_  attach-agent      $node_($i)      $sink
+  }
 }
 
+#Setting time in seconds for Events (Tx): Simulation lapse -> 60 sec
+set appTime1    20  ;# in seconds
+set appTime2    55  ;# in seconds
+set appTime3    80  ;# in seconds 
+set stopTime    120 ;# in seconds
+
 #As random-motion is disabled, node position and movement (speed and direction) must be provided
-#Initial Node Positions
+#Initial Node positions, movement and configurations...
 source ./gitNS2.scn
 
-# SINK
-$ns_ at 0.0	"$node_(0) NodeLabel PAN Coor"		;# Label Node0 as "PAN Coor".
-$ns_ at 0.0	"$node_(0) sscs startCTPANCoord 0"	;# startCTPANCoord <txBeacon=0>: Cluster Tree. No-Beacon
 
-# COORDINATORS
-$ns_ at 0.5	"$node_(1) NodeLabel Coor1"		;# Label Node1 as "Coor".
-$ns_ at 0.5	"$node_(1) sscs startCTDevice 1 1 0" 	;# startCTDevice <isFFD=1> <assoPermit=1>  <txBeacon=0>
-$ns_ at 1.8	"$node_(2) NodeLabel Coor2"		;# Label Node2 as "Coor".
-$ns_ at 1.8	"$node_(2) sscs startCTDevice 1 1 0"	;# Coord, Non-beacon
-$ns_ at 3.1	"$node_(3) NodeLabel Coor3"		;# Label Node3 as "Coor".
-$ns_ at 3.1	"$node_(3) sscs startCTDevice 1 1 0"	;# startCTDevice <isFFD=1> <assoPermit=1>  <txBeacon=0>
-
-# DEVICES
-$ns_ at 4.4	"$node_(4) NodeLabel Dev"		;# Label Node4 as "Dev".
-$ns_ at 4.4	"$node_(4) sscs startCTDevice 0"	;#Device
-$ns_ at 5.7	"$node_(5) NodeLabel Dev"		;# Label Node5 as "Dev".
-$ns_ at 5.7	"$node_(5) sscs startCTDevice 0"	;#Device
-$ns_ at 7.0	"$node_(6) NodeLabel Dev"		;# Label Node6 as "Dev".
-$ns_ at 7.0	"$node_(6) sscs startCTDevice 0"	;#Device
-$ns_ at 8.3	"$node_(7) NodeLabel Dev"		;# Label Node7 as "Dev".
-$ns_ at 8.3	"$node_(7) sscs startCTDevice 0"	;#Device
-$ns_ at 9.6	"$node_(8) NodeLabel Dev"		;# Label Node8 as "Dev".
-$ns_ at 9.6	"$node_(8) sscs startCTDevice 0"	;#Device
-$ns_ at 10.9	"$node_(9) NodeLabel Dev"		;# Label Node9 as "Dev".
-$ns_ at 10.9	"$node_(9) sscs startCTDevice 0"	;#Device
-$ns_ at 12.2	"$node_(10) label Dev"			;# Label Node10 as "Dev".
-$ns_ at 12.2	"$node_(10) sscs startCTDevice 0"	;#Device
-
-Mac/802_15_4 wpanNam PlaybackRate 100ms			;#Step of simulation
-
+Mac/802_15_4 wpanNam PlaybackRate 100ms			        ;#Step of simulation
 $ns_ at $appTime1 "puts \"\nTransmitting data ...\n\""
 
 # Setup traffic flow between nodes
-proc cbrtraffic { src dst interval starttime } {
-   global ns_ node_					;#Declares use of ns_ and node_ global vars
-   set udp_($src) [new Agent/UDP]			;#Declares a UDP agent called "udp_"
-   eval $ns_ attach-agent \$node_($src) \$udp_($src)	;#Attaches the udp agent _ to source node _
-   set null_($dst) [new Agent/Null]			;#Creates a null agent
-   eval $ns_ attach-agent \$node_($dst) \$null_($dst)	;#Attaches a null agent to dest node _
-   
-   set cbr_($src) [new Application/Traffic/CBR]		;#Declares new application for Constant Bit Rate Traffic called cbr_
-   eval \$cbr_($src) set packetSize_ 80			;#size in Bytes
-   eval \$cbr_($src) set interval_ $interval		;#bit rate in secs
-   eval \$cbr_($src) set random_ 0			;#No Random cbr
-   #eval \$cbr_($src) set maxpkts_ 10000		;#Maximum packetes sent in whole simulation	
-   eval \$cbr_($src) attach-agent \$udp_($src)		;#Attaches udp agent to src node
-   eval $ns_ connect \$udp_($src) \$null_($dst)		;#Connects the udp agent on src node to the null agent on dst node.
-   $ns_ at $starttime "$cbr_($src) start"		;#Start
+proc cbrtraffic { src dst starttime } {
+  global ns_ node_ val            ;#Declares use of ns_ and node_ global vars
+  set udp_($src) [new Agent/UDP]                          ;#Declares a UDP agent called "udp_"
+
+  #$udp_($src) set class_ $src
+  eval $ns_ attach-agent \$node_($src) \$udp_($src)       ;#Attaches the udp agent _ to source node _
+
+  set null_($dst)     [new Agent/Null]                    ;#Creates a null agent
+  eval $ns_ attach-agent \$node_($dst) \$null_($dst)      ;#Attaches a null agent to dest node _
+
+  set cbr_($src)      [new Application/Traffic/CBR]       ;#Declares new application for Constant Bit Rate Traffic called cbr_
+  eval \$cbr_($src)   set packet_size_  \$val(packetsize) ;#size in Bytes
+  eval \$cbr_($src)   set interval_     $val(interval)    ;#bit rate in secs
+  eval \$cbr_($src)   set random_       0                 ;#No Random cbr
+  #eval \$cbr_($src) set maxpkts_ 10000                    ;#Maximum packets sent in whole simulation 
+  eval \$cbr_($src)   attach-agent      $udp_($src)       ;#Attaches udp agent to src node
+
+  eval $ns_ connect   \$udp_($src)      \$null_($dst)     ;#Connects the udp agent on src node to the null agent on dst node.
+  #$ns_ connect        $udp_($src)   $sink                 ;#LossMonitor?
+
+  $ns_ at $starttime "$cbr_($src) start"                  ;#Start
+  # $ns_ at $val(duration) "$cbr($i) stop"
 }
 
 if { ("$val(traffic)" == "cbr") } {
@@ -193,14 +205,14 @@ if { ("$val(traffic)" == "cbr") } {
   $ns_ at [expr $appTime3 + 1] "Mac/802_15_4 wpanNam PlaybackRate 100.0ms"
 
   #Declaration of the roles of the nodes.
-  set dst_node1 0	;#7
-  set dst_node2 0	;#5
-  set dst_node3 0	;#0
-  set src_node 10	;#10
+  set dst_node1 10	;#Sink Node
+  set dst_node2 10	;#Sink Node
+  set dst_node3 10	;#Sink Node
+  set src_node  9	  ;#Wild Node
 
-  cbrtraffic $src_node $dst_node1 0.2 $appTime1	;#Calls for cbrtraffic proc: node10 -> node1 every 0.2s since time $appTime
-  cbrtraffic $src_node $dst_node2 0.2 $appTime2	;#Calls for cbrtraffic proc: node10 -> node0 every 0.2s since time $appTime
-  cbrtraffic $src_node $dst_node3 0.2 $appTime3	;#Calls for cbrtraffic proc: node10 -> node7 every 0.2s since time $appTime
+  cbrtraffic $src_node $dst_node1 $appTime1	;#Calls for cbrtraffic proc: node10 -> node1 every 0.2s since time $appTime
+  cbrtraffic $src_node $dst_node1 $appTime2	;#Calls for cbrtraffic proc: node10 -> node0 every 0.2s since time $appTime
+  cbrtraffic $src_node $dst_node1 $appTime3	;#Calls for cbrtraffic proc: node10 -> node7 every 0.2s since time $appTime
 
   #$node add-mark [name] [color] [shape]
   $ns_ at $appTime1 "$node_($src_node) add-mark m1 blue circle"
@@ -233,12 +245,12 @@ if { ("$val(traffic)" == "cbr") } {
 
 # Defines the node size in nam
 for {set i 0} {$i < $val(nn)} {incr i} {
-	$ns_ initial_node_pos $node_($i) 4	;#2
+    $ns_    initial_node_pos  $node_($i) $val(node_size)
 }
 
 # Tell nodes when the simulation ends
-for {set i 0} {$i < $val(nn) } {incr i} {
-    $ns_ at $stopTime "$node_($i) reset";
+for {set i 0} {$i < $val(nn)} {incr i} {
+  $ns_ at $stopTime "$node_($i) reset";
 }
 
 $ns_ at $stopTime "stop"
@@ -246,9 +258,24 @@ $ns_ at $stopTime "puts \"\nNS EXITING...\n\""
 $ns_ at $stopTime "$ns_ halt"
 
 proc stop {} {
-    global ns_ tracefd appTime val env
+    #global ns_ tracefd appTime val env     #Version 1
+
+    #version 2
+    #global ns tracefd nam stats val sink
+
+    #Mixed version
+    global ns_ tracefd appTime val env nam stats sink
+
+    #from v2
+    set bytes [$sink set bytes_]
+    set losts  [$sink set nlost_]
+    set pkts [$sink set npkts_]
+    puts $stats "bytes losts pkts"
+    puts $stats "$bytes $losts $pkts"
+
     $ns_ flush-trace
     close $tracefd
+    close $stats
     set hasDISPLAY 0
     foreach index [array names env] {
         #puts "$index: $env($index)"
@@ -256,9 +283,16 @@ proc stop {} {
                 set hasDISPLAY 1
         }
     }
-    if { ("$val(nam)" == "gitNS2.nam") && ("$hasDISPLAY" == "1") } {
+    if { ("$val(nam_file)" == "gitNS2.nam") && ("$hasDISPLAY" == "1") } {
     	exec nam gitNS2.nam &
     }
+
+    # From version 2
+    # $ns flush-trace
+    # close $nam
+    # close $tracefd
+    # close $stats
+
 }
 
 puts "\nStarting Simulation..."
