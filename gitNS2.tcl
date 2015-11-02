@@ -11,7 +11,7 @@
 # Project Parameters
 # ======================================================================
 set val(duration)       10                    ;# Simulation duration in secs                
-set val(packetsize)     80                    ;# Size in Bytes
+set val(packetsize)     70                    ;# Size in Bytes
 set val(repeatTx)       10                    ;# Number of Packets
 set val(interval)       0.02                  ;# BitRate in secs
 set val(x)              50                    ;# X=50m
@@ -33,10 +33,11 @@ set val(ll)     	LL                         	;# link layer type
 set val(ant)    	Antenna/OmniAntenna        	;# antenna model
 set val(ifqlen) 	50                         	;# max packet in ifq
 set val(nn)     	11                         	;# number of nodes: 1 SN, 3 CH, 6 MN, 1WN
-#set val(rp)     	DSDV                       	 ;# routing protocol        USE THIS ONE!
-#set val(rp)     	TORA                       	 ;# routing protocol
-#set val(rp)     	DSR                        	 ;# routing protocol
-set val(rp)     	AODV	                      ;# routing protocol
+set val(rp)     	DSDV                        ;# Destination Sequence Distance Vector routing protocol. USE THIS ONE!
+#set val(rp)     	TORA                       	 ;# Temporally ordered Routing Algorithm routing protocol
+#set val(rp)     	DSR                        	 ;# Dynamic Source Routing routing protocol
+#set val(rp)     	AODV	                      ;# Adhoc On-demand Distance Vector routing protocol
+#set val(rp)      PUMA                        ;# Protocol for Unified Multicasting Through Announcements routing protocol
 set val(traffic)	cbr                        	;# cbr||poisson||ftp||tcp
 
 #read command line arguments
