@@ -106,10 +106,10 @@ $ns_ at 10.9	"$node_(8) sscs startCTDevice 0"	    ;#Device
 $ns_ at 12.2	"$node_(9) label WN"			        ;# Label Node as "WN".
 $ns_ at 12.2	"$node_(9) sscs startCTDevice 0"	    ;#Device
 
-# # ======== MOVEMENT =============
-# set nodeSpeed 		0.9			;# 0.9 m/s
-# set startMoving 	14.0		;#Moving start time
-# set noMove 			119.99		;#
+# ======== MOVEMENT =============
+set nodeSpeed 		0.9			;# 0.9 m/s
+set startMoving 	14.0		;#Moving start time
+set noMove 			119.99		;#
 
 # # Within Cluster1
 # $ns_ at $startMoving "$node_(3) setdest 37 41 $nodeSpeed"
@@ -150,8 +150,8 @@ $ns_ at 12.2	"$node_(9) sscs startCTDevice 0"	    ;#Device
 # $ns_ at 78.5 "$node_(8) setdest 46 16 $nodeSpeed"
 # $ns_ at 100.0 "$node_(8) setdest 40 30 $nodeSpeed"
 
-# # Wild node
-# $ns_ at $startMoving "$node_(9) setdest 48 23 $nodeSpeed"
-# $ns_ at 50.0 "$node_(9) setdest 27 17 $nodeSpeed"
-# $ns_ at 75.0 "$node_(9) setdest 19 35 $nodeSpeed"
-# $ns_ at 97.0 "$node_(9) setdest 30 49 $nodeSpeed"
+# Wild node
+$ns_ at $startMoving "$node_(9) setdest 48 23 $nodeSpeed"
+$ns_ at 50.0 "$node_(9) setdest 27 17 $nodeSpeed"
+$ns_ at 75.0 "$node_(9) setdest 19 35 $nodeSpeed"
+$ns_ at 97.0 "$node_(9) setdest 30 49 $nodeSpeed"
