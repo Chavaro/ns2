@@ -38,7 +38,7 @@ $0 ~/^f.* RTR/ {
 
 {
 	event = $1;
-        time = $2;
+	time = $2;
 	node_id = $3;
 	layer = $4;
 	flags = $5;

@@ -74,8 +74,31 @@ print("Throughput: \t%.2f bps" % (float(len(recv)*80*8/100)));
 #End-to-End = Paq. Enviados del Nodo10 y Recibidos por el Sink
 print("End-2-End: \t%.2f ms" % (float(len(recv)/100)));
 
-
+os.system("echo | awk -f plotFilter.awk gitNS2.tr > plotData.xgr");
 os.system("echo | awk -f traceAnalysis.awk gitNS2.tr");
+
+# === GNUPLOT.PY ===
+import numpy as np
+import Gnuplot
+
+#Instantiate Gnuplot object
+g = Gnuplot.Gnuplot(persist=1)
+#Formatting options
+g('set grid')
+
+g('set xlabel "secs"')
+g('set xr [0.0:121.0]')
+g('set style line 2')
+
+g('set ylabel "kb"')
+g('set ytics 200')
+g('set yr [0.0:1550.0]')
+
+g('set key left ')
+#Plot data
+g('plot "plotData.xgr" using 1:2 title "Throughput/s" with impulses lt rgb "blue"')
+#lines, points, linespoints, impulses, dots, steps, fsteps, histeps, errorbars, xerrorbars, yerrorbars, xyerrorbars, boxes, boxerrorbars, boxxyerrorbars, financebars, candlesticks or vector
+
 
 
 # Cerrar archivo
