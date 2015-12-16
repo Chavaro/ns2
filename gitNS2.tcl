@@ -11,9 +11,9 @@
 # Project Parameters
 # ======================================================================
 set val(duration)       10                    ;# Simulation duration in secs                
-set val(packetsize)     70                    ;# Size in Bytes
+set val(packetsize)     80                    ;# Size in Bytes 70B
 set val(repeatTx)       10                    ;# Number of Packets
-set val(interval)       0.02                  ;# BitRate in secs
+set val(interval)       0.2                   ;# BitRate in secs 0.2
 set val(x)              50                    ;# X=50m
 set val(y)              50                    ;# Y=50m
 set val(nam_file)       "gitNS2.nam"
@@ -33,10 +33,10 @@ set val(ll)     	LL                         	;# link layer type
 set val(ant)    	Antenna/OmniAntenna        	;# antenna model
 set val(ifqlen) 	50                         	;# max packet in ifq
 set val(nn)     	11                         	;# number of nodes: 1 SN, 3 CH, 6 MN, 1WN
-set val(rp)     	DSDV                        ;# Destination Sequence Distance Vector routing protocol. USE THIS ONE!
+#set val(rp)     	DSDV                        ;# Destination Sequence Distance Vector routing protocol. USE THIS ONE!
 #set val(rp)     	TORA                       	 ;# Temporally ordered Routing Algorithm routing protocol
 #set val(rp)     	DSR                        	 ;# Dynamic Source Routing routing protocol
-#set val(rp)     	AODV	                      ;# Adhoc On-demand Distance Vector routing protocol
+set val(rp)     	AODV	                      ;# Adhoc On-demand Distance Vector routing protocol
 #set val(rp)      PUMA                        ;# Protocol for Unified Multicasting Through Announcements routing protocol
 set val(traffic)	cbr                        	;# cbr||poisson||ftp||tcp
 
@@ -52,6 +52,12 @@ proc getCmdArgu {argc argv} {
 }
 getCmdArgu $argc $argv
 
+#Setting time in seconds for Events (Tx): Simulation lapse -> 60 sec
+set appTime1    20  ;# in seconds
+set appTime2    55  ;# in seconds
+set appTime3    80  ;# in seconds 
+set stopTime    120 ;# in seconds
+
 # ======================================================================
 # Main Program
 # ======================================================================
@@ -65,7 +71,7 @@ set   tracefd	              [open ./$val(trace_file) w]
 $ns_  trace-all             $tracefd
 
 #Setup stats file
-set stats                   [open $val(stats_file) w]
+#set stats                   [open $val(stats_file) w]
 
 #Setup nam file
 set   namtrace              [open ./$val(nam_file) w]
@@ -145,17 +151,17 @@ $ns_ node-config -adhocRouting  $val(rp) \
 for {set i 0} {$i < $val(nn) } {incr i} {  
   set node_($i)             [$ns_ node]
   $node_($i)  random-motion 0;
-  if { ($i == 0) } {
-    set   sink              [new Agent/LossMonitor]
-    $ns_  attach-agent      $node_($i)      $sink
-  }
+  # if { ($i == 0) } {
+  #   set   sink              [new Agent/LossMonitor]
+  #   $ns_  attach-agent      $node_($i)      $sink
+  # }
 }
 
-#Setting time in seconds for Events (Tx): Simulation lapse -> 60 sec
-set appTime1    20  ;# in seconds
-set appTime2    55  ;# in seconds
-set appTime3    80  ;# in seconds 
-set stopTime    120 ;# in seconds
+# #Setting time in seconds for Events (Tx): Simulation lapse -> 60 sec
+# set appTime1    20  ;# in seconds
+# set appTime2    55  ;# in seconds
+# set appTime3    80  ;# in seconds 
+# set stopTime    120 ;# in seconds
 
 #As random-motion is disabled, node position and movement (speed and direction) must be provided
 #Initial Node positions, movement and configurations...
@@ -258,25 +264,26 @@ $ns_ at $stopTime "stop"
 $ns_ at $stopTime "puts \"\nNS EXITING...\n\""
 $ns_ at $stopTime "$ns_ halt"
 
+#ANALIZAR ESTA FUNCION; ARROJA PROBLEMAS
 proc stop {} {
-    #global ns_ tracefd appTime val env     #Version 1
+    global ns_ tracefd appTime val env     ;#Version 1
 
     #version 2
     #global ns tracefd nam stats val sink
 
     #Mixed version
-    global ns_ tracefd appTime val env nam stats sink
+    # global ns_ tracefd appTime val env nam stats sink
 
-    #from v2
-    set bytes [$sink set bytes_]
-    set losts  [$sink set nlost_]
-    set pkts [$sink set npkts_]
-    puts $stats "bytes losts pkts"
-    puts $stats "$bytes $losts $pkts"
+    # #from v2
+    # set bytes [$sink set bytes_]
+    # set losts  [$sink set nlost_]
+    # set pkts [$sink set npkts_]
+    # puts $stats "bytes losts pkts"
+    # puts $stats "$bytes $losts $pkts"
 
     $ns_ flush-trace
     close $tracefd
-    close $stats
+    # close $stats
     set hasDISPLAY 0
     foreach index [array names env] {
         #puts "$index: $env($index)"

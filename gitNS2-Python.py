@@ -23,8 +23,8 @@ print("Trazas totales: \t%s" %(len(enunciados)));	#Modo de impresion 3
 #print "Trazas totales: ", len(enunciados);	#Modo de impresion 4
 
 # Definiciones para el filtrado
-sinkNode = '_0_';
-mobileNode = '_10_';
+sinkNode = '_10_';
+mobileNode = '_9_';
 findLayer = 'MAC';
 findTraffic = 'cbr';
 splitText = ' ';

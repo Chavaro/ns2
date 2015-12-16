@@ -1,6 +1,17 @@
+	gitSteps
+--------------------------------------------------------------------------------------------
+git status
+git add --all
+git status
+git commit -m "Comentario sobre actualizacion"
+git status
+git push origin master
+git status
+
+
 about UINT_8 getLQI();
 --------------------------------------------------------------------------------------------
-File:  
+*File:  
 	p802_15_4phy.cc
 Function: 
 	void Phy802_15_4::PD_DATA_indication(UINT_8 ,Packet *psdu,UINT_8 ppduLinkQuality);
@@ -8,7 +19,7 @@ Comentarios:
 	Hacer una función por el estilo uint_8 Phy802_15_4::getLQI(UINT_8 ,Packet *psdu)
 
 
-File:  
+*File:  
 	p802_15_4phy.cc
 Function: 
 	UINT_8 Phy802_15_4::measureLinkQ(Packet *p)

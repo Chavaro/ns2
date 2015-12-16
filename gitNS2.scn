@@ -1,6 +1,6 @@
 # ====== SCENARIO =======
 # Nodes 					11
-# 	-> Sink Node			1
+#	-> Sink Node			1
 #	-> Cluster Heads		3
 #	-> Mobile Nodes			6
 #	-> Wild Node 			1
@@ -18,8 +18,6 @@
 
 # ======== INITIAL POSITIONS =============
 ## Sink Node ##
-#Former node 0
-#Now: node 10
 $node_(10) set X_ 30
 $node_(10) set Y_ 30
 $node_(10) set Z_ 0.000000000000
@@ -111,44 +109,44 @@ set nodeSpeed 		0.9			;# 0.9 m/s
 set startMoving 	14.0		;#Moving start time
 set noMove 			119.99		;#
 
-# # Within Cluster1
-# $ns_ at $startMoving "$node_(3) setdest 37 41 $nodeSpeed"
-# $ns_ at 35.5 "$node_(3) setdest 23 47 $nodeSpeed"
-# $ns_ at 57.0 "$node_(3) setdest 37 41 $nodeSpeed"
-# $ns_ at 78.5 "$node_(3) setdest 23 47 $nodeSpeed"
-# $ns_ at 100.0 "$node_(3) setdest 37 41 $nodeSpeed"
+# Within Cluster1
+$ns_ at $startMoving "$node_(3) setdest 37 41 $nodeSpeed"
+$ns_ at 35.5 "$node_(3) setdest 23 47 $nodeSpeed"
+$ns_ at 57.0 "$node_(3) setdest 37 41 $nodeSpeed"
+$ns_ at 78.5 "$node_(3) setdest 23 47 $nodeSpeed"
+$ns_ at 100.0 "$node_(3) setdest 37 41 $nodeSpeed"
 
-# $ns_ at $startMoving "$node_(4) setdest 23 41 $nodeSpeed"
-# $ns_ at 35.5 "$node_(4) setdest 37 47 $nodeSpeed"
-# $ns_ at 57.0 "$node_(4) setdest 23 41 $nodeSpeed"
-# $ns_ at 78.5 "$node_(4) setdest 37 47 $nodeSpeed"
-# $ns_ at 100.0 "$node_(4) setdest 23 41 $nodeSpeed"
+$ns_ at $startMoving "$node_(4) setdest 23 41 $nodeSpeed"
+$ns_ at 35.5 "$node_(4) setdest 37 47 $nodeSpeed"
+$ns_ at 57.0 "$node_(4) setdest 23 41 $nodeSpeed"
+$ns_ at 78.5 "$node_(4) setdest 37 47 $nodeSpeed"
+$ns_ at 100.0 "$node_(4) setdest 23 41 $nodeSpeed"
 
-# # Within Cluster2
-# $ns_ at $startMoving "$node_(5) setdest 22 30 $nodeSpeed"
-# $ns_ at 35.5 "$node_(5) setdest 16 16 $nodeSpeed"
-# $ns_ at 57.0 "$node_(5) setdest 22 30 $nodeSpeed"
-# $ns_ at 78.5 "$node_(5) setdest 16 16 $nodeSpeed"
-# $ns_ at 100.0 "$node_(5) setdest 22 30 $nodeSpeed"
+# Within Cluster2
+$ns_ at $startMoving "$node_(5) setdest 22 30 $nodeSpeed"
+$ns_ at 35.5 "$node_(5) setdest 16 16 $nodeSpeed"
+$ns_ at 57.0 "$node_(5) setdest 22 30 $nodeSpeed"
+$ns_ at 78.5 "$node_(5) setdest 16 16 $nodeSpeed"
+$ns_ at 100.0 "$node_(5) setdest 22 30 $nodeSpeed"
 
-# $ns_ at $startMoving "$node_(6) setdest 22 16 $nodeSpeed"
-# $ns_ at 35.5 "$node_(6) setdest 16 30 $nodeSpeed"
-# $ns_ at 57.0 "$node_(6) setdest 22 16 $nodeSpeed"
-# $ns_ at 78.5 "$node_(6) setdest 16 30 $nodeSpeed"
-# $ns_ at 100.0 "$node_(6) setdest 22 16 $nodeSpeed"
+$ns_ at $startMoving "$node_(6) setdest 22 16 $nodeSpeed"
+$ns_ at 35.5 "$node_(6) setdest 16 30 $nodeSpeed"
+$ns_ at 57.0 "$node_(6) setdest 22 16 $nodeSpeed"
+$ns_ at 78.5 "$node_(6) setdest 16 30 $nodeSpeed"
+$ns_ at 100.0 "$node_(6) setdest 22 16 $nodeSpeed"
 
-# # Within Cluster3
-# $ns_ at $startMoving "$node_(7) setdest 40 16 $nodeSpeed"
-# $ns_ at 35.5 "$node_(7) setdest 46 30 $nodeSpeed"
-# $ns_ at 57.0 "$node_(7) setdest 40 16 $nodeSpeed"
-# $ns_ at 78.5 "$node_(7) setdest 46 30 $nodeSpeed"
-# $ns_ at 100.0 "$node_(7) setdest 40 16 $nodeSpeed"
+# Within Cluster3
+$ns_ at $startMoving "$node_(7) setdest 40 16 $nodeSpeed"
+$ns_ at 35.5 "$node_(7) setdest 46 30 $nodeSpeed"
+$ns_ at 57.0 "$node_(7) setdest 40 16 $nodeSpeed"
+$ns_ at 78.5 "$node_(7) setdest 46 30 $nodeSpeed"
+$ns_ at 100.0 "$node_(7) setdest 40 16 $nodeSpeed"
 
-# $ns_ at $startMoving "$node_(8) setdest 40 30 $nodeSpeed"
-# $ns_ at 35.5 "$node_(8) setdest 46 16 $nodeSpeed"
-# $ns_ at 57.0 "$node_(8) setdest 40 30 $nodeSpeed"
-# $ns_ at 78.5 "$node_(8) setdest 46 16 $nodeSpeed"
-# $ns_ at 100.0 "$node_(8) setdest 40 30 $nodeSpeed"
+$ns_ at $startMoving "$node_(8) setdest 40 30 $nodeSpeed"
+$ns_ at 35.5 "$node_(8) setdest 46 16 $nodeSpeed"
+$ns_ at 57.0 "$node_(8) setdest 40 30 $nodeSpeed"
+$ns_ at 78.5 "$node_(8) setdest 46 16 $nodeSpeed"
+$ns_ at 100.0 "$node_(8) setdest 40 30 $nodeSpeed"
 
 # Wild node
 $ns_ at $startMoving "$node_(9) setdest 48 23 $nodeSpeed"
